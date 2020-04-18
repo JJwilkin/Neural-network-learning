@@ -61,6 +61,34 @@ Theta2_grad = zeros(size(Theta2));
 %               the regularization separately and then add them to Theta1_grad
 %               and Theta2_grad from Part 2.
 %
+% Foward propagation
+% a1 = X;
+X = [ones(m,1) X]; % 5000*401
+z2 = Theta1 * X'; % (25*401)*(401*5000)
+a2 = sigmoid(z2); % (25*5000)
+
+a2 = [ones(m,1) a2'];
+z3 = Theta2 * a2';
+h_theta = sigmoid(z3); % h_theta equals a3
+
+% y(k) - the great trick - we need to recode the labels as vectors containing only values 0 or 1 (page 5 of ex4.pdf)
+y_new = zeros(num_labels, m); % 10*5000
+for i=1:m,
+  y_new(y(i),i)=1;
+end
+
+J = (1/m) * sum ( sum ( (-y_new) .* log(h_theta) - (1-y_new) .* log(1-h_theta) ));
+
+% Note we should not regularize the terms that correspond to the bias. 
+% For the matrices Theta1 and Theta2, this corresponds to the first column of each matrix.
+t1 = Theta1(:,2:size(Theta1,2));
+t2 = Theta2(:,2:size(Theta2,2));
+
+% Regularization
+Reg = lambda  * (sum( sum ( t1.^ 2 )) + sum( sum ( t2.^ 2 ))) / (2*m);
+
+% Regularized cost function
+J = J + Reg;
 
 
 
